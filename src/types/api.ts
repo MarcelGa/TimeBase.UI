@@ -34,7 +34,7 @@ export interface ProviderHealthInfo {
 export interface TimeSeriesData {
   time: string // ISO date string
   symbol: string
-  providerId: string
+  providerSlug: string
   interval: string
   open: number
   high: number
@@ -131,5 +131,5 @@ export interface GetHistoricalDataParams {
   interval?: string
   start?: string
   end?: string
-  providerId: string // Required - must specify which provider to fetch from
+  providerSlug: string // Required - must specify which provider to fetch from
 }

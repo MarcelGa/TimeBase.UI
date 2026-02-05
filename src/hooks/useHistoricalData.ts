@@ -13,18 +13,18 @@ export const dataKeys = {
   providersForSymbol: (symbol: string) => [...dataKeys.providers(), symbol] as const,
 }
 
-// Parameters for the hook - providerId can be null/undefined when not yet selected
+// Parameters for the hook - providerSlug can be null/undefined when not yet selected
 export interface UseHistoricalDataParams {
   symbol: string
   interval?: string
   start?: string
   end?: string
-  providerId: string | null | undefined
+  providerSlug: string | null | undefined
 }
 
 // Get historical data
 export function useHistoricalData(params: UseHistoricalDataParams, options?: { enabled?: boolean }) {
-  const hasProviderId = !!params.providerId
+  const hasProviderSlug = !!params.providerSlug
   
   return useQuery({
     queryKey: dataKeys.historicalData(params as GetHistoricalDataParams),
@@ -33,9 +33,9 @@ export function useHistoricalData(params: UseHistoricalDataParams, options?: { e
       interval: params.interval,
       start: params.start,
       end: params.end,
-      providerId: params.providerId!, // Safe - only called when enabled
+      providerSlug: params.providerSlug!, // Safe - only called when enabled
     }),
-    enabled: options?.enabled !== false && !!params.symbol && hasProviderId,
+    enabled: options?.enabled !== false && !!params.symbol && hasProviderSlug,
     staleTime: 60000, // Consider data stale after 1 minute
   })
 }

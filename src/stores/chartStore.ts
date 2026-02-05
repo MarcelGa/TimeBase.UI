@@ -20,9 +20,9 @@ interface ChartState {
   currentPrice: PriceInfo | null
   setCurrentPrice: (price: PriceInfo | null) => void
 
-  // Selected provider ID (optional filter)
-  selectedProviderId: string | null
-  setSelectedProviderId: (id: string | null) => void
+  // Selected provider slug (optional filter)
+  selectedProviderSlug: string | null
+  setSelectedProviderSlug: (slug: string | null) => void
 
   // Recent symbols (history)
   recentSymbols: string[]
@@ -62,8 +62,8 @@ export const useChartStore = create<ChartState>()(
       setCurrentPrice: (currentPrice) => set({ currentPrice }),
 
       // Provider filter
-      selectedProviderId: null,
-      setSelectedProviderId: (selectedProviderId) => set({ selectedProviderId }),
+      selectedProviderSlug: null,
+      setSelectedProviderSlug: (selectedProviderSlug) => set({ selectedProviderSlug }),
 
       // Recent symbols
       recentSymbols: [],
@@ -86,7 +86,7 @@ export const useChartStore = create<ChartState>()(
         interval: state.interval,
         recentSymbols: state.recentSymbols,
         showVolume: state.showVolume,
-        selectedProviderId: state.selectedProviderId,
+        selectedProviderSlug: state.selectedProviderSlug,
       }),
     }
   )

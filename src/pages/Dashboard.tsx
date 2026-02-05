@@ -10,7 +10,7 @@ import { AlertCircle } from 'lucide-react'
 import type { TimeSeriesData } from '@/types/api'
 
 export function Dashboard() {
-  const { symbol, interval, showVolume, currentPrice, selectedProviderId } = useChartStore()
+  const { symbol, interval, showVolume, currentPrice, selectedProviderSlug } = useChartStore()
   const [realtimeData, setRealtimeData] = useState<TimeSeriesData | null>(null)
 
   // Initialize SignalR connection
@@ -54,7 +54,7 @@ export function Dashboard() {
     }
   }, [interval])
 
-  // Fetch historical data (only when providerId is selected)
+  // Fetch historical data (only when providerSlug is selected)
   const {
     data: historicalData,
     isLoading,
@@ -66,7 +66,7 @@ export function Dashboard() {
     interval,
     start: dateRange.start,
     end: dateRange.end,
-    providerId: selectedProviderId,
+    providerSlug: selectedProviderSlug,
   })
 
   // Handle real-time price updates
@@ -127,7 +127,7 @@ export function Dashboard() {
         {/* Chart Area */}
         <Card className="flex-1 m-2 overflow-hidden rounded-lg">
           <CardContent className="p-0 h-full relative">
-            {!selectedProviderId && (
+            {!selectedProviderSlug && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                   <AlertCircle className="h-8 w-8" />
@@ -137,7 +137,7 @@ export function Dashboard() {
               </div>
             )}
 
-            {selectedProviderId && isLoading && (
+            {selectedProviderSlug && isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                 <div className="flex flex-col items-center gap-2">
                   <Spinner size="lg" />
@@ -146,7 +146,7 @@ export function Dashboard() {
               </div>
             )}
 
-            {selectedProviderId && isError && (
+            {selectedProviderSlug && isError && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                 <div className="flex flex-col items-center gap-2 text-destructive">
                   <AlertCircle className="h-8 w-8" />
@@ -158,7 +158,7 @@ export function Dashboard() {
               </div>
             )}
 
-            {selectedProviderId && !isLoading && !isError && chartData.length === 0 && (
+            {selectedProviderSlug && !isLoading && !isError && chartData.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                   <AlertCircle className="h-8 w-8" />

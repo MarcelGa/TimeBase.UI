@@ -13,7 +13,7 @@ export const dataApi = {
       interval: params.interval,
       start: params.start,
       end: params.end,
-      providerId: params.providerId,
+      providerSlug: params.providerSlug,
     }),
 
   // Get data summary for a symbol

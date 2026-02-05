@@ -16,22 +16,22 @@ interface ProviderSelectorProps {
 }
 
 export function ProviderSelector({ className }: ProviderSelectorProps) {
-  const { selectedProviderId, setSelectedProviderId } = useChartStore()
+  const { selectedProviderSlug, setSelectedProviderSlug } = useChartStore()
   const { data: providers, isLoading } = useProviders(true) // Only fetch enabled providers
 
   // Auto-select first provider if none is selected and providers are available
   useEffect(() => {
-    if (!selectedProviderId && providers && providers.length > 0) {
-      setSelectedProviderId(providers[0].id)
+    if (!selectedProviderSlug && providers && providers.length > 0) {
+      setSelectedProviderSlug(providers[0].slug)
     }
-  }, [selectedProviderId, providers, setSelectedProviderId])
+  }, [selectedProviderSlug, providers, setSelectedProviderSlug])
 
   const handleValueChange = (value: string) => {
-    setSelectedProviderId(value)
+    setSelectedProviderSlug(value)
   }
 
   // Find selected provider name for display
-  const selectedProvider = providers?.find((p) => p.id === selectedProviderId)
+  const selectedProvider = providers?.find((p) => p.slug === selectedProviderSlug)
 
   // Show loading state
   if (isLoading) {
@@ -56,7 +56,7 @@ export function ProviderSelector({ className }: ProviderSelectorProps) {
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <Database className="h-4 w-4 text-muted-foreground" />
-      <Select value={selectedProviderId ?? ''} onValueChange={handleValueChange}>
+      <Select value={selectedProviderSlug ?? ''} onValueChange={handleValueChange}>
         <SelectTrigger className="w-[180px] h-8">
           <SelectValue placeholder="Select provider">
             {selectedProvider?.name ?? 'Select provider'}
@@ -64,7 +64,7 @@ export function ProviderSelector({ className }: ProviderSelectorProps) {
         </SelectTrigger>
         <SelectContent>
           {providers.map((provider) => (
-            <SelectItem key={provider.id} value={provider.id}>
+            <SelectItem key={provider.id} value={provider.slug}>
               <div className="flex items-center gap-2">
                 <span>{provider.name}</span>
                 <span className="text-xs text-muted-foreground">v{provider.version}</span>
