@@ -17,7 +17,7 @@ interface ProviderSelectorProps {
 
 export function ProviderSelector({ className }: ProviderSelectorProps) {
   const { selectedProviderSlug, setSelectedProviderSlug } = useChartStore()
-  const { data: providers, isLoading } = useProviders(true) // Only fetch enabled providers
+  const { data: providers, isLoading } = useProviders()
 
   // Auto-select first provider if none is selected and providers are available
   useEffect(() => {

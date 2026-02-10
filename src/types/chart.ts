@@ -16,7 +16,7 @@ export interface VolumeData {
 }
 
 // Supported intervals for the chart
-export type ChartInterval = '1m' | '5m' | '15m' | '30m' | '1h' | '4h' | '1d' | '1w' | '1M'
+export type ChartInterval = '1m' | '5m' | '15m' | '30m' | '1h' | '4h' | '1d' | '1wk' | '1mo'
 
 export interface IntervalOption {
   value: ChartInterval
@@ -32,8 +32,8 @@ export const INTERVAL_OPTIONS: IntervalOption[] = [
   { value: '1h', label: '1H', description: '1 Hour' },
   { value: '4h', label: '4H', description: '4 Hours' },
   { value: '1d', label: '1D', description: '1 Day' },
-  { value: '1w', label: '1W', description: '1 Week' },
-  { value: '1M', label: '1M', description: '1 Month' },
+  { value: '1wk', label: '1W', description: '1 Week' },
+  { value: '1mo', label: '1M', description: '1 Month' },
 ]
 
 // Chart theme colors

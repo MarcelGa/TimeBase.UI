@@ -27,13 +27,19 @@ export function useHistoricalData(params: UseHistoricalDataParams, options?: { e
   const hasProviderSlug = !!params.providerSlug
   
   return useQuery({
-    queryKey: dataKeys.historicalData(params as GetHistoricalDataParams),
+    queryKey: dataKeys.historicalData({
+      symbol: params.symbol,
+      interval: params.interval,
+      start: params.start,
+      end: params.end,
+      provider: params.providerSlug ?? '',
+    } as GetHistoricalDataParams),
     queryFn: () => dataApi.getHistorical({
       symbol: params.symbol,
       interval: params.interval,
       start: params.start,
       end: params.end,
-      providerSlug: params.providerSlug!, // Safe - only called when enabled
+      provider: params.providerSlug!, // Safe - only called when enabled
     }),
     enabled: options?.enabled !== false && !!params.symbol && hasProviderSlug,
     staleTime: 60000, // Consider data stale after 1 minute

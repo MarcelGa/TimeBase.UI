@@ -6,37 +6,39 @@ import type { InstallProviderRequest, SetProviderEnabledRequest } from '@/types/
 export const providerKeys = {
   all: ['providers'] as const,
   lists: () => [...providerKeys.all, 'list'] as const,
-  list: (enabled?: boolean) => [...providerKeys.lists(), { enabled }] as const,
+  list: () => [...providerKeys.lists()] as const,
   details: () => [...providerKeys.all, 'detail'] as const,
-  detail: (id: string) => [...providerKeys.details(), id] as const,
-  health: (id: string) => [...providerKeys.all, 'health', id] as const,
+  detail: (slug: string) => [...providerKeys.details(), slug] as const,
+  health: (slug: string) => [...providerKeys.all, 'health', slug] as const,
+  symbols: () => [...providerKeys.all, 'symbols'] as const,
+  symbolsForProvider: (slug?: string) => [...providerKeys.symbols(), { slug }] as const,
 }
 
 // Get all providers
-export function useProviders(enabled?: boolean) {
+export function useProviders() {
   return useQuery({
-    queryKey: providerKeys.list(enabled),
-    queryFn: () => providersApi.getAll(enabled),
+    queryKey: providerKeys.list(),
+    queryFn: () => providersApi.getAll(),
     select: (data) => data.providers,
   })
 }
 
-// Get provider by ID
-export function useProvider(id: string) {
+// Get provider by slug
+export function useProvider(slug: string) {
   return useQuery({
-    queryKey: providerKeys.detail(id),
-    queryFn: () => providersApi.getById(id),
+    queryKey: providerKeys.detail(slug),
+    queryFn: () => providersApi.getBySlug(slug),
     select: (data) => data.provider,
-    enabled: !!id,
+    enabled: !!slug,
   })
 }
 
 // Check provider health
-export function useProviderHealth(id: string) {
+export function useProviderHealth(slug: string) {
   return useQuery({
-    queryKey: providerKeys.health(id),
-    queryFn: () => providersApi.checkHealth(id),
-    enabled: !!id,
+    queryKey: providerKeys.health(slug),
+    queryFn: () => providersApi.checkHealth(slug),
+    enabled: !!slug,
     refetchInterval: 30000, // Refetch every 30 seconds
   })
 }
@@ -58,7 +60,7 @@ export function useUninstallProvider() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => providersApi.uninstall(id),
+    mutationFn: (slug: string) => providersApi.uninstall(slug),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: providerKeys.lists() })
     },
@@ -70,11 +72,11 @@ export function useSetProviderEnabled() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, request }: { id: string; request: SetProviderEnabledRequest }) =>
-      providersApi.setEnabled(id, request),
-    onSuccess: (_, { id }) => {
+    mutationFn: ({ slug, request }: { slug: string; request: SetProviderEnabledRequest }) =>
+      providersApi.setEnabled(slug, request),
+    onSuccess: (_, { slug }) => {
       queryClient.invalidateQueries({ queryKey: providerKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: providerKeys.detail(id) })
+      queryClient.invalidateQueries({ queryKey: providerKeys.detail(slug) })
     },
   })
 }
@@ -84,9 +86,9 @@ export function useRefreshProviderCapabilities() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => providersApi.refreshCapabilities(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: providerKeys.detail(id) })
+    mutationFn: (slug: string) => providersApi.refreshCapabilities(slug),
+    onSuccess: (_, slug) => {
+      queryClient.invalidateQueries({ queryKey: providerKeys.detail(slug) })
     },
   })
 }
@@ -100,5 +102,13 @@ export function useRefreshAllCapabilities() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: providerKeys.all })
     },
+  })
+}
+
+// Get provider symbols (optionally filtered by provider slug)
+export function useProviderSymbols(provider?: string) {
+  return useQuery({
+    queryKey: providerKeys.symbolsForProvider(provider),
+    queryFn: () => providersApi.getSymbols(provider),
   })
 }

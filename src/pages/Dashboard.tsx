@@ -38,10 +38,10 @@ export function Dashboard() {
       case '1d':
         start.setFullYear(start.getFullYear() - 1) // 1 year
         break
-      case '1w':
+      case '1wk':
         start.setFullYear(start.getFullYear() - 3) // 3 years
         break
-      case '1M':
+      case '1mo':
         start.setFullYear(start.getFullYear() - 10) // 10 years
         break
       default:

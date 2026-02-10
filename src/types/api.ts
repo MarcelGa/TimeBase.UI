@@ -24,6 +24,20 @@ export interface ProviderCapabilities {
   intervals: string[]
 }
 
+export interface ProviderSymbol {
+  symbol: string
+  name: string
+  type: string
+  intervals: string[]
+  metadata: Record<string, string> | null
+}
+
+export interface ProviderSymbolsInfo {
+  slug: string
+  name: string
+  symbols: ProviderSymbol[]
+}
+
 export interface ProviderHealthInfo {
   id: string
   slug: string
@@ -34,7 +48,7 @@ export interface ProviderHealthInfo {
 export interface TimeSeriesData {
   time: string // ISO date string
   symbol: string
-  providerSlug: string
+  providerId: string
   interval: string
   open: number
   high: number
@@ -102,6 +116,11 @@ export interface CheckProviderHealthResponse {
   checkedAt: string
 }
 
+export interface GetProviderSymbolsResponse {
+  providers: ProviderSymbolsInfo[]
+  totalSymbols: number
+}
+
 export interface GetHistoricalDataResponse {
   symbol: string
   interval: string
@@ -131,5 +150,5 @@ export interface GetHistoricalDataParams {
   interval?: string
   start?: string
   end?: string
-  providerSlug: string // Required - must specify which provider to fetch from
+  provider: string // Required - must specify which provider to fetch from
 }
