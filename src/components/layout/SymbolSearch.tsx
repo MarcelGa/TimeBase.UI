@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, type FormEvent } from 'react'
+import { useState, useCallback, useMemo, type FormEvent } from 'react'
 import { Search, X, Clock, Hash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -62,17 +62,10 @@ export function SymbolSearch({ className }: SymbolSearchProps) {
     return [...recentItems, ...matchItems]
   }, [filteredSymbols, recentSymbols])
 
-  useEffect(() => {
-    if (!showDropdown || navigableItems.length === 0) {
-      setActiveIndex(-1)
-      return
-    }
-    setActiveIndex((current) => {
-      if (current < 0) return 0
-      if (current >= navigableItems.length) return navigableItems.length - 1
-      return current
-    })
-  }, [showDropdown, navigableItems.length])
+  const safeActiveIndex =
+    activeIndex < 0
+      ? -1
+      : Math.min(activeIndex, Math.max(navigableItems.length - 1, 0))
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -109,6 +102,9 @@ export function SymbolSearch({ className }: SymbolSearchProps) {
             onChange={(e) => {
               setInputValue(e.target.value.toUpperCase())
               setShowDropdown(true)
+              if (navigableItems.length > 0) {
+                setActiveIndex(0)
+              }
             }}
             onKeyDown={(e) => {
               if (!showDropdown || navigableItems.length === 0) return
@@ -127,18 +123,24 @@ export function SymbolSearch({ className }: SymbolSearchProps) {
                 )
               }
 
-              if (e.key === 'Enter' && activeIndex >= 0) {
+              if (e.key === 'Enter' && safeActiveIndex >= 0) {
                 e.preventDefault()
-                const selected = navigableItems[activeIndex]
+                const selected = navigableItems[safeActiveIndex]
                 if (selected) handleSelectSymbol(selected.label)
               }
 
               if (e.key === 'Escape') {
                 e.preventDefault()
                 setShowDropdown(false)
+                setActiveIndex(-1)
               }
             }}
-            onFocus={() => setShowDropdown(true)}
+            onFocus={() => {
+              setShowDropdown(true)
+              if (navigableItems.length > 0) {
+                setActiveIndex(0)
+              }
+            }}
             onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
             placeholder="Search symbol (e.g., AAPL)"
             className="pl-9 pr-8 h-9 font-mono"
@@ -175,7 +177,8 @@ export function SymbolSearch({ className }: SymbolSearchProps) {
                     type="button"
                     className={cn(
                       'w-full px-3 py-2 text-left text-sm hover:bg-accent rounded-sm font-mono',
-                      activeIndex === navigableItems.findIndex((item) => item.key === `recent-${s}`)
+                      safeActiveIndex ===
+                        navigableItems.findIndex((item) => item.key === `recent-${s}`)
                         ? 'bg-accent'
                         : ''
                     )}
@@ -197,7 +200,7 @@ export function SymbolSearch({ className }: SymbolSearchProps) {
                   const providerLabel =
                     option.providers.length > 1 ? ` — ${option.providers.join(', ')}` : ''
                   const isActive =
-                    activeIndex ===
+                    safeActiveIndex ===
                     navigableItems.findIndex((item) => item.key === `match-${option.symbol}`)
                   return (
                     <button
